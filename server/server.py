@@ -5,7 +5,6 @@ import base64
 import io
 import os
 from datetime import datetime
-from test_image import image_base
 
 app = Flask(__name__)
 
