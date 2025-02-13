@@ -1,9 +1,10 @@
+let lastOcrResult = ""; // Храним результат OCR
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "captureScreen") {
     chrome.tabs.captureVisibleTab((screenshotUrl) => {
       console.log("[INFO] Screenshot captured");
 
-      // Отправляем полный скриншот в content.js для обрезки
       chrome.tabs.sendMessage(sender.tab.id, {
         action: "cropImage",
         dataUrl: screenshotUrl,
@@ -22,12 +23,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .then(result => {
         console.log("[INFO] OCR result received:", result.text);
 
-        // Отправляем текст в popup.js
+        // Сохраняем результат
+        lastOcrResult = result.text || "Текст не розпізнано";
+
+        // Отправляем результат всем popup'ам, которые открыты
         chrome.runtime.sendMessage({
           action: "ocrResult",
-          text: result.text
+          text: lastOcrResult
         });
       })
       .catch(error => console.error("[ERROR] OCR request failed:", error));
+  }
+
+  // Когда popup запрашивает текст
+  if (message.action === "getOcrResult") {
+    sendResponse({ text: lastOcrResult });
   }
 });
