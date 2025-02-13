@@ -18,11 +18,7 @@ document.getElementById("copyButton").addEventListener("click", function () {
   const textToCopy = recognizedTextElement.textContent.trim();
 
   if (textToCopy) {
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      alert("Текст скопійовано!");
-    }).catch(err => {
-      alert("Помилка копіювання: " + err);
-    });
+    navigator.clipboard.writeText(textToCopy);
   } else {
     alert("Немає тексту для копіювання.");
   }
